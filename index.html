@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GAME-EGG // Server Egg Collection</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --teal: #03dac6;
+            --pink: #ff0266;
+            --blue: #179cf0;
+            --bg-primary: #0a0a0f;
+            --bg-secondary: #12121a;
+            --bg-card: #16161f;
+            --bg-hover: #1a1a25;
+            --border: #2a2a35;
+            --border-hover: #3a3a45;
+            --text-primary: #e8e8f0;
+            --text-secondary: #8888a0;
+            --text-dim: #555568;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+            -moz-osx-font-smoothing: grayscale;
+        }
+
+        canvas#particles {
+            position: fixed;
+            inset: 0;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        .container {
+            position: relative;
+            z-index: 1;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+
+        /* HEADER */
+        .header {
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            background: rgba(10, 10, 15, 0.85);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border-bottom: 1px solid var(--border);
+        }
+
+        .header-inner {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 16px 0;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .logo-icon {
+            width: 36px;
+            height: 36px;
+            background: linear-gradient(135deg, var(--teal), var(--blue));
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logo-icon svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--bg-primary);
+        }
+
+        .logo-text {
+            font-weight: 700;
+            font-size: 18px;
+            letter-spacing: -0.02em;
+        }
+
+        .logo-text span {
+            color: var(--text-dim);
+            font-weight: 400;
+            font-size: 13px;
+            margin-left: 8px;
+        }
+
+        .header-status {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .status-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--teal);
+            border-radius: 50%;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { opacity: 1; box-shadow: 0 0 0 0 rgba(3, 218, 198, 0.4); }
+            50% { opacity: 0.8; box-shadow: 0 0 0 6px rgba(3, 218, 198, 0); }
+        }
+
+        /* HERO */
+        .hero {
+            padding: 80px 0 60px;
+            text-align: center;
+        }
+
+        .hero-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 6px 14px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 100px;
+            font-size: 13px;
+            color: var(--text-secondary);
+            margin-bottom: 24px;
+        }
+
+        .hero-badge-dot {
+            width: 6px;
+            height: 6px;
+            background: var(--teal);
+            border-radius: 50%;
+        }
+
+        .hero h1 {
+            font-size: clamp(32px, 5vw, 56px);
+            font-weight: 800;
+            letter-spacing: -0.03em;
+            line-height: 1.1;
+            margin-bottom: 16px;
+        }
+
+        .hero h1 .gradient {
+            background: linear-gradient(135deg, var(--teal), var(--blue));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .hero p {
+            font-size: 18px;
+            color: var(--text-secondary);
+            max-width: 520px;
+            margin: 0 auto 40px;
+            line-height: 1.6;
+        }
+
+        .hero-stats {
+            display: flex;
+            justify-content: center;
+            gap: 48px;
+        }
+
+        .hero-stat {
+            text-align: center;
+        }
+
+        .hero-stat-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: var(--teal);
+        }
+
+        .hero-stat-label {
+            font-size: 13px;
+            color: var(--text-dim);
+            margin-top: 4px;
+        }
+
+        /* SEARCH */
+        .search-section {
+            padding: 0 0 40px;
+        }
+
+        .search-wrapper {
+            position: relative;
+            max-width: 480px;
+            margin: 0 auto;
+        }
+
+        .search-icon {
+            position: absolute;
+            left: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 18px;
+            height: 18px;
+            color: var(--text-dim);
+            pointer-events: none;
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 14px 16px 14px 44px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            font-size: 15px;
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .search-input::placeholder {
+            color: var(--text-dim);
+        }
+
+        .search-input:focus {
+            border-color: var(--teal);
+            box-shadow: 0 0 0 3px rgba(3, 218, 198, 0.15);
+        }
+
+        /* SECTION */
+        .section {
+            margin-bottom: 64px;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 24px;
+        }
+
+        .section-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.08em;
+        }
+
+        .section-count {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 13px;
+            color: var(--text-dim);
+        }
+
+        /* GRID */
+        .servers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+            gap: 12px;
+        }
+
+        .server-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.2s;
+            opacity: 0;
+            transform: translateY(12px);
+        }
+
+        .server-card.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .server-card:hover {
+            background: var(--bg-hover);
+            border-color: var(--border-hover);
+        }
+
+        .card-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .card-name {
+            font-size: 16px;
+            font-weight: 600;
+            letter-spacing: -0.01em;
+            flex: 1;
+            margin-right: 12px;
+        }
+
+        .card-steam {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 5px 10px;
+            background: rgba(23, 156, 240, 0.1);
+            border: 1px solid rgba(23, 156, 240, 0.2);
+            border-radius: 6px;
+            color: var(--blue);
+            font-size: 12px;
+            font-weight: 500;
+            text-decoration: none;
+            white-space: nowrap;
+            transition: all 0.2s;
+        }
+
+        .card-steam:hover {
+            background: rgba(23, 156, 240, 0.15);
+            border-color: rgba(23, 156, 240, 0.3);
+        }
+
+        .card-steam svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .card-desc {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.5;
+            margin-bottom: 16px;
+        }
+
+        .card-link {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            color: var(--teal);
+            text-decoration: none;
+            transition: gap 0.2s;
+        }
+
+        .card-link:hover {
+            gap: 10px;
+        }
+
+        .card-link svg {
+            width: 14px;
+            height: 14px;
+            transition: transform 0.2s;
+        }
+
+        .card-link:hover svg {
+            transform: translateX(2px);
+        }
+
+        /* FUTURE */
+        .future-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 10px;
+        }
+
+        .future-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 14px 16px;
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 10px;
+            transition: all 0.2s;
+        }
+
+        .future-item:hover {
+            background: var(--bg-hover);
+            border-color: var(--border-hover);
+        }
+
+        .future-icon {
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: rgba(255, 2, 102, 0.1);
+            border-radius: 8px;
+            color: var(--pink);
+        }
+
+        .future-icon svg {
+            width: 16px;
+            height: 16px;
+        }
+
+        .future-name {
+            font-size: 14px;
+            font-weight: 500;
+            flex: 1;
+        }
+
+        .future-badge {
+            font-size: 11px;
+            font-weight: 500;
+            color: var(--text-dim);
+            padding: 3px 8px;
+            background: var(--bg-secondary);
+            border-radius: 4px;
+        }
+
+        /* CONTRIBUTE */
+        .contribute {
+            margin-bottom: 64px;
+        }
+
+        .contribute-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .contribute-card h3 {
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 12px;
+            letter-spacing: -0.02em;
+        }
+
+        .contribute-card p {
+            font-size: 15px;
+            color: var(--text-secondary);
+            max-width: 440px;
+            margin: 0 auto 28px;
+            line-height: 1.6;
+        }
+
+        .contribute-actions {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 12px 24px;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
+            text-decoration: none;
+            transition: all 0.2s;
+            cursor: pointer;
+            border: none;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--teal), var(--blue));
+            color: var(--bg-primary);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 8px 24px rgba(3, 218, 198, 0.25);
+        }
+
+        .btn-secondary {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            color: var(--text-primary);
+        }
+
+        .btn-secondary:hover {
+            background: var(--bg-hover);
+            border-color: var(--border-hover);
+        }
+
+        /* FOOTER */
+        .footer {
+            border-top: 1px solid var(--border);
+            padding: 24px 0;
+        }
+
+        .footer-inner {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .footer-text {
+            font-size: 13px;
+            color: var(--text-dim);
+        }
+
+        .footer-text a {
+            color: var(--text-secondary);
+            text-decoration: none;
+        }
+
+        .footer-text a:hover {
+            color: var(--teal);
+        }
+
+        /* NO RESULTS */
+        .no-results {
+            grid-column: 1 / -1;
+            text-align: center;
+            padding: 60px 20px;
+            color: var(--text-dim);
+            font-size: 14px;
+        }
+
+        .no-results svg {
+            width: 40px;
+            height: 40px;
+            color: var(--text-dim);
+            margin-bottom: 12px;
+            opacity: 0.5;
+        }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .hero {
+                padding: 60px 0 40px;
+            }
+
+            .hero-stats {
+                gap: 32px;
+            }
+
+            .servers-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .future-list {
+                grid-template-columns: 1fr;
+            }
+
+            .contribute-card {
+                padding: 28px 20px;
+            }
+
+            .footer-inner {
+                flex-direction: column;
+                gap: 8px;
+                text-align: center;
+            }
+
+            .header-inner {
+                flex-direction: column;
+                gap: 12px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 0 16px;
+            }
+
+            .hero h1 {
+                font-size: 28px;
+            }
+
+            .hero p {
+                font-size: 15px;
+            }
+
+            .hero-stats {
+                flex-direction: column;
+                gap: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <canvas id="particles"></canvas>
+
+    <header class="header">
+        <div class="container">
+            <div class="header-inner">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <svg viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/></svg>
+                    </div>
+                    <div class="logo-text">game-egg<span>pterodactyl collection</span></div>
+                </div>
+                <div class="header-status">
+                    <span class="status-dot"></span>
+                    <span id="count-display">0 servers</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="hero">
+            <div class="hero-badge">
+                <span class="hero-badge-dot"></span>
+                Custom egg collection
+            </div>
+            <h1>Game Servers<br><span class="gradient">Not Available Elsewhere</span></h1>
+            <p>A curated collection of game server configurations for Pterodactyl Panel. Each egg is battle-tested and ready for deployment.</p>
+            <div class="hero-stats">
+                <div class="hero-stat">
+                    <div class="hero-stat-value" id="stat-games">0</div>
+                    <div class="hero-stat-label">Game Servers</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-value">100%</div>
+                    <div class="hero-stat-label">Open Source</div>
+                </div>
+                <div class="hero-stat">
+                    <div class="hero-stat-value">Free</div>
+                    <div class="hero-stat-label">To Deploy</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="search-section">
+            <div class="search-wrapper">
+                <svg class="search-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="11" cy="11" r="8"/>
+                    <path d="M21 21l-4.35-4.35"/>
+                </svg>
+                <input type="text" id="search" class="search-input" placeholder="Search game servers...">
+            </div>
+        </section>
+
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">Deployed Servers</h2>
+                <span class="section-count" id="visible-count"></span>
+            </div>
+            <div class="servers-grid" id="servers-grid"></div>
+        </section>
+
+        <section class="section">
+            <div class="section-header">
+                <h2 class="section-title">Future Additions</h2>
+            </div>
+            <div class="future-list" id="future-list"></div>
+        </section>
+
+        <section class="contribute">
+            <div class="contribute-card">
+                <h3>Have an egg to share?</h3>
+                <p>If you have a game server configuration not listed here, feel free to submit a pull request or open an issue.</p>
+                <div class="contribute-actions">
+                    <a href="#" class="btn btn-primary">Submit Pull Request</a>
+                    <a href="#" class="btn btn-secondary">Open Issue</a>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <footer class="footer">
+        <div class="container">
+            <div class="footer-inner">
+                <span class="footer-text">game-egg — Custom Egg Collection for <a href="https://pterodactyl.io/" target="_blank">Pterodactyl Panel</a></span>
+                <span class="footer-text">Licensed under individual game terms</span>
+            </div>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
+    <script>
+        // Particles background
+        if (typeof particlesJS !== 'undefined') {
+            particlesJS('particles', {
+                particles: {
+                    number: { value: 60, density: { enable: true, value_area: 800 } },
+                    color: { value: ["#03dac6", "#ff0266", "#179cf0"] },
+                    shape: { type: "circle" },
+                    opacity: { value: 0.3, random: true, anim: { enable: true, speed: 0.5, opacity_min: 0.1 } },
+                    size: { value: 3, random: true },
+                    line_linked: { enable: true, distance: 150, color: "#03dac6", opacity: 0.15, width: 1 },
+                    move: { enable: true, speed: 0.8, direction: "none", random: true, out_mode: "out" }
+                },
+                interactivity: {
+                    detect_on: "canvas",
+                    events: {
+                        onhover: { enable: true, mode: "grab" },
+                        onclick: { enable: false },
+                        resize: true
+                    },
+                    modes: {
+                        grab: { distance: 140, line_linked: { opacity: 0.3 } }
+                    }
+                },
+                retina_detect: true
+            });
+        }
+
+        // Server data
+        const servers = [
+            { name: "Alien Swarm Reactive Drop", steam: "https://store.steampowered.com/app/563560/", desc: "Top-down co-op shooter with intense alien combat" },
+            { name: "Battlebit Remastered", steam: "https://store.steampowered.com/app/671860/", desc: "Large-scale multiplayer combat with destructible environments" },
+            { name: "Blackwake", steam: "https://store.steampowered.com/app/420290/", desc: "Naval warfare sandbox with ship-to-ship battles" },
+            { name: "Blade Symphony", steam: "https://store.steampowered.com/app/225600/", desc: "Competitive sword fighting with precise combat mechanics" },
+            { name: "Dark and Light", steam: "https://store.steampowered.com/app/529180/", desc: "Fantasy survival open world with magic and creatures" },
+            { name: "Dragon Uprising Online", steam: null, desc: "Dragon-powered combat MMO experience" },
+            { name: "Dune: Awakening", steam: "https://store.steampowered.com/app/1172710/", desc: "Desert planet survival MMO on Arrakis" },
+            { name: "Echoes of Elysium", steam: null, desc: "Mythic realm exploration and character progression" },
+            { name: "Hanako: Honor & Blade", steam: null, desc: "Feudal Japan combat with honor-based gameplay" },
+            { name: "Midnight Ghost Hunt", steam: "https://store.steampowered.com/app/915810/", desc: "Prop hunt with supernatural ghost mechanics" },
+            { name: "Nienix", steam: null, desc: "Physics-based arena combat with unique mechanics" },
+            { name: "Nightingale", steam: "https://store.steampowered.com/app/1928980/", desc: "Victorian fantasy survival across mystical realms" },
+            { name: "Northstar", steam: null, desc: "Titanfall community mod with custom servers" },
+            { name: "ORMOD: Directive", steam: "https://store.steampowered.com/app/3424730/", desc: "Tactical cooperative shooter with mod support" },
+            { name: "Out of Action", steam: null, desc: "Fast-paced arena combat with fluid movement" },
+            { name: "Outerstellar", steam: null, desc: "Space exploration RPG across unknown galaxies" },
+            { name: "Plains of Pain", steam: null, desc: "Medieval warfare chaos with massive battles" },
+            { name: "R5RELOADED", steam: null, desc: "Respawn community revival of classic gameplay" },
+            { name: "Romestead", steam: "https://store.steampowered.com/app/1805320/", desc: "Roman-era survival builder with historical setting" },
+            { name: "Saleblazers", steam: "https://store.steampowered.com/app/1419850/", desc: "Sandbox survival crafting with unique mechanics" },
+            { name: "ShatterRush", steam: null, desc: "High-speed combat racing with explosive action" },
+            { name: "Spellbreak", steam: null, desc: "Battle royale magic combat with spell casting" },
+            { name: "SPT (Escape from Tarkov Mod)", steam: null, desc: "Offline Tarkov experience with single-player focus" },
+            { name: "Subsistence", steam: "https://store.steampowered.com/app/418030/", desc: "Open-world survival sandbox with base building" },
+            { name: "Survive The Nights", steam: "https://store.steampowered.com/app/541300/", desc: "Zombie survival crafting with day-night cycles" },
+            { name: "Thunder Tier One", steam: "https://store.steampowered.com/app/377300/", desc: "Tactical military operations with realistic combat" }
+        ];
+
+        const futureGames = [
+            "Outpost Zero",
+            "Steam App 762880",
+            "Steam App 696120",
+            "Steam App 393800"
+        ];
+
+        const grid = document.getElementById('servers-grid');
+        const futureList = document.getElementById('future-list');
+        const searchInput = document.getElementById('search');
+        const countDisplay = document.getElementById('count-display');
+        const statGames = document.getElementById('stat-games');
+        const visibleCount = document.getElementById('visible-count');
+
+        let searchTerm = '';
+
+        const steamIcon = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.979 0C5.678 0 .511 4.86.022 11.037l6.432 2.658c.545-.371 1.203-.59 1.912-.59.063 0 .125.002.188.006l2.861-4.142V8.91c0-2.495 2.028-4.524 4.524-4.524 2.494 0 4.524 2.031 4.524 4.527s-2.03 4.525-4.524 4.525h-.105l-4.076 2.911c0 .052.004.105.004.159 0 1.875-1.515 3.396-3.39 3.396-1.635 0-3.016-1.173-3.331-2.727L.436 15.27C1.862 20.307 6.486 24 11.979 24c6.627 0 12-5.373 12-12S18.606 0 11.979 0zM7.54 18.21l-1.473-.61c.262.543.714.999 1.314 1.25 1.297.539 2.793-.076 3.332-1.375.263-.63.264-1.319.005-1.949s-.75-1.121-1.377-1.383c-.624-.26-1.29-.249-1.878-.03l1.523.63c.953.398 1.409 1.478 1.013 2.432-.397.957-1.479 1.41-2.433 1.012l-.026-.009v.032zm8.4-9.303c-1.34 0-2.43 1.09-2.43 2.43 0 1.34 1.09 2.43 2.43 2.43 1.34 0 2.43-1.09 2.43-2.43 0-1.34-1.09-2.43-2.43-2.43zm0 3.86c-.79 0-1.43-.64-1.43-1.43 0-.79.64-1.43 1.43-1.43.79 0 1.43.64 1.43 1.43 0 .79-.64 1.43-1.43 1.43z"/></svg>`;
+
+        function createCard(server, index) {
+            const card = document.createElement('div');
+            card.className = 'server-card';
+            card.dataset.name = server.name.toLowerCase();
+            card.style.transitionDelay = `${index * 0.03}s`;
+
+            const steamLink = server.steam 
+                ? `<a href="${server.steam}" target="_blank" rel="noopener" class="card-steam">${steamIcon} Steam</a>`
+                : '';
+
+            card.innerHTML = `
+                <div class="card-top">
+                    <h3 class="card-name">${server.name}</h3>
+                    ${steamLink}
+                </div>
+                <p class="card-desc">${server.desc}</p>
+                <a href="./${encodeURIComponent(server.name)}/" class="card-link">
+                    View egg
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M5 12h14M12 5l7 7-7 7"/>
+                    </svg>
+                </a>
+            `;
+
+            return card;
+        }
+
+        function renderServers() {
+            grid.innerHTML = '';
+            
+            const filtered = servers.filter(s => 
+                s.name.toLowerCase().includes(searchTerm) || 
+                s.desc.toLowerCase().includes(searchTerm)
+            );
+
+            visibleCount.textContent = `${filtered.length} of ${servers.length}`;
+
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="no-results">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="11" cy="11" r="8"/>
+                            <path d="M21 21l-4.35-4.35"/>
+                        </svg>
+                        <div>No servers found matching your search</div>
+                    </div>
+                `;
+                return;
+            }
+
+            filtered.forEach((server, i) => {
+                const card = createCard(server, i);
+                grid.appendChild(card);
+                requestAnimationFrame(() => {
+                    requestAnimationFrame(() => {
+                        card.classList.add('visible');
+                    });
+                });
+            });
+        }
+
+        function renderFuture() {
+            futureGames.forEach(game => {
+                const item = document.createElement('div');
+                item.className = 'future-item';
+                item.innerHTML = `
+                    <div class="future-icon">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M12 5v14M5 12h14"/>
+                        </svg>
+                    </div>
+                    <span class="future-name">${game}</span>
+                    <span class="future-badge">Pending</span>
+                `;
+                futureList.appendChild(item);
+            });
+        }
+
+        function animateCounter(target, element) {
+            let current = 0;
+            const duration = 800;
+            const step = target / (duration / 16);
+            
+            function update() {
+                current += step;
+                if (current >= target) {
+                    element.textContent = target;
+                    return;
+                }
+                element.textContent = Math.floor(current);
+                requestAnimationFrame(update);
+            }
+            update();
+        }
+
+        let debounceTimer;
+        searchInput.addEventListener('input', (e) => {
+            clearTimeout(debounceTimer);
+            debounceTimer = setTimeout(() => {
+                searchTerm = e.target.value.toLowerCase().trim();
+                renderServers();
+            }, 100);
+        });
+
+        renderServers();
+        renderFuture();
+        animateCounter(servers.length, countDisplay);
+        animateCounter(servers.length, statGames);
+    </script>
+</body>
+</html>
