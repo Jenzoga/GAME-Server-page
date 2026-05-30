@@ -342,32 +342,6 @@
             font-size: 14px;
             color: var(--text-secondary);
             line-height: 1.5;
-            margin-bottom: 16px;
-        }
-
-        .card-link {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            font-size: 13px;
-            font-weight: 500;
-            color: var(--teal);
-            text-decoration: none;
-            transition: gap 0.2s;
-        }
-
-        .card-link:hover {
-            gap: 10px;
-        }
-
-        .card-link svg {
-            width: 14px;
-            height: 14px;
-            transition: transform 0.2s;
-        }
-
-        .card-link:hover svg {
-            transform: translateX(2px);
         }
 
         /* FUTURE */
@@ -617,20 +591,12 @@
                 <span class="hero-badge-dot"></span>
                 Custom egg collection
             </div>
-            <h1>Game Servers<br><span class="gradient">Not Available Elsewhere</span></h1>
+            <h1>Game Servers</h1>
             <p>A curated collection of game server configurations for Pterodactyl Panel. Each egg is battle-tested and ready for deployment.</p>
             <div class="hero-stats">
                 <div class="hero-stat">
                     <div class="hero-stat-value" id="stat-games">0</div>
                     <div class="hero-stat-label">Game Servers</div>
-                </div>
-                <div class="hero-stat">
-                    <div class="hero-stat-value">100%</div>
-                    <div class="hero-stat-label">Open Source</div>
-                </div>
-                <div class="hero-stat">
-                    <div class="hero-stat-value">Free</div>
-                    <div class="hero-stat-label">To Deploy</div>
                 </div>
             </div>
         </section>
@@ -774,12 +740,6 @@
                     ${steamLink}
                 </div>
                 <p class="card-desc">${server.desc}</p>
-                <a href="./${encodeURIComponent(server.name)}/" class="card-link">
-                    View egg
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M5 12h14M12 5l7 7-7 7"/>
-                    </svg>
-                </a>
             `;
 
             return card;
