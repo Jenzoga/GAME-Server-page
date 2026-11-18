@@ -282,9 +282,11 @@
             border: 1px solid var(--border);
             border-radius: 12px;
             padding: 20px;
-            transition: all 0.2s;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
             opacity: 0;
             transform: translateY(12px);
+            position: relative;
+            overflow: hidden;
         }
 
         .server-card.visible {
@@ -294,7 +296,15 @@
 
         .server-card:hover {
             background: var(--bg-hover);
-            border-color: var(--border-hover);
+            border-color: var(--teal);
+            transform: translateY(-4px) scale(1.05);
+            box-shadow: 0 12px 32px rgba(3, 218, 198, 0.2);
+            z-index: 10;
+        }
+
+        .server-card:focus-within {
+            border-color: var(--teal);
+            box-shadow: 0 0 0 3px rgba(3, 218, 198, 0.15);
         }
 
         .card-top {
@@ -441,6 +451,174 @@
             opacity: 0.5;
         }
 
+        /* SCROLL TO TOP */
+        .scroll-top {
+            position: fixed;
+            bottom: 24px;
+            right: 24px;
+            width: 48px;
+            height: 48px;
+            background: var(--teal);
+            border: none;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            opacity: 0;
+            visibility: hidden;
+            transform: scale(0.8);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(3, 218, 198, 0.3);
+        }
+
+        .scroll-top.visible {
+            opacity: 1;
+            visibility: visible;
+            transform: scale(1);
+        }
+
+        .scroll-top:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 16px rgba(3, 218, 198, 0.4);
+        }
+
+        .scroll-top:active {
+            transform: scale(0.95);
+        }
+
+        .scroll-top svg {
+            width: 20px;
+            height: 20px;
+            fill: var(--bg-primary);
+        }
+
+        /* TOAST NOTIFICATIONS */
+        .toast-container {
+            position: fixed;
+            top: 24px;
+            right: 24px;
+            z-index: 1001;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .toast {
+            background: var(--bg-card);
+            border: 1px solid var(--teal);
+            border-radius: 10px;
+            padding: 12px 16px;
+            min-width: 200px;
+            max-width: 320px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+            animation: slideIn 0.3s ease;
+        }
+
+
+
+        .toast-message {
+            font-size: 14px;
+            color: var(--text-primary);
+        }
+
+        @keyframes slideIn {
+            from {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        @keyframes slideOut {
+            from {
+                opacity: 1;
+                transform: translateX(0);
+            }
+            to {
+                opacity: 0;
+                transform: translateX(100%);
+            }
+        }
+
+        /* SORT CONTROLS */
+        .sort-controls {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sort-label {
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .sort-select {
+            padding: 8px 32px 8px 12px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            color: var(--text-primary);
+            font-family: 'Inter', sans-serif;
+            font-size: 14px;
+            cursor: pointer;
+            outline: none;
+            transition: all 0.2s;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%238888a0' d='M2.5 4.5l3.5 3.5 3.5-3.5'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 8px center;
+        }
+
+        .sort-select:hover {
+            border-color: var(--teal);
+        }
+
+        .sort-select:focus {
+            border-color: var(--teal);
+            box-shadow: 0 0 0 3px rgba(3, 218, 198, 0.15);
+        }
+
+        /* SEARCH CLEAR BUTTON */
+        .search-clear {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            width: 24px;
+            height: 24px;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            background: var(--bg-secondary);
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            color: var(--text-dim);
+            transition: all 0.2s;
+        }
+
+        .search-clear:hover {
+            background: var(--bg-hover);
+            color: var(--text-secondary);
+        }
+
+        .search-clear.visible {
+            display: flex;
+        }
+
+        .search-clear svg {
+            width: 14px;
+            height: 14px;
+        }
+
         /* RESPONSIVE */
         @media (max-width: 768px) {
             .hero {
@@ -459,9 +637,7 @@
                 grid-template-columns: 1fr;
             }
 
-            .contribute-card {
-                padding: 28px 20px;
-            }
+
 
             .footer-inner {
                 flex-direction: column;
@@ -491,6 +667,38 @@
             .hero-stats {
                 flex-direction: column;
                 gap: 16px;
+            }
+
+            .sort-controls {
+                flex-direction: column;
+                align-items: stretch;
+            }
+
+            .scroll-top {
+                bottom: 16px;
+                right: 16px;
+                width: 44px;
+                height: 44px;
+            }
+
+            .toast-container {
+                top: 16px;
+                right: 16px;
+                left: 16px;
+            }
+
+            .toast {
+                min-width: auto;
+            }
+        }
+
+        /* Reduced motion preference */
+        @media (prefers-reduced-motion: reduce) {
+            .server-card,
+            .scroll-top,
+            .toast {
+                transition: none;
+                animation: none;
             }
         }
     </style>
@@ -537,7 +745,20 @@
                     <circle cx="11" cy="11" r="8"/>
                     <path d="M21 21l-4.35-4.35"/>
                 </svg>
-                <input type="text" id="search" class="search-input" placeholder="Search game servers...">
+                <input type="text" id="search" class="search-input" placeholder="Search game servers... (Press / to focus)">
+                <button class="search-clear" id="search-clear" aria-label="Clear search">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="18" y1="6" x2="6" y2="18"/>
+                        <line x1="6" y1="6" x2="18" y2="18"/>
+                    </svg>
+                </button>
+            </div>
+            <div class="sort-controls">
+                <span class="sort-label">Sort by:</span>
+                <select id="sort-select" class="sort-select">
+                    <option value="a-z">Name (A-Z)</option>
+                    <option value="z-a">Name (Z-A)</option>
+                </select>
             </div>
         </section>
 
@@ -566,6 +787,14 @@
             </div>
         </div>
     </footer>
+
+    <button class="scroll-top" id="scroll-top" aria-label="Scroll to top">
+        <svg viewBox="0 0 24 24" fill="currentColor">
+            <path d="M12 8l-6 6 1.41 1.41L12 10.83l4.59 4.58L18 14z"/>
+        </svg>
+    </button>
+
+    <div class="toast-container" id="toast-container"></div>
 
     <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
     <script>
@@ -598,15 +827,21 @@
 
         // Server data
         const servers = [
+            { name: "'83", steam: "https://store.steampowered.com/app/1457890/", desc: "Cold-War tactical FPS with 40v40 squad combat" },
             { name: "Alien Swarm Reactive Drop", steam: "https://store.steampowered.com/app/563560/", desc: "Top-down co-op shooter with intense alien combat" },
+            { name: "Angels Fall First", steam: "https://store.steampowered.com/app/407480/", desc: "Sci-fi shooter with pilotable capital ships and boarding" },
             { name: "Battlebit Remastered", steam: "https://store.steampowered.com/app/671860/", desc: "Large-scale multiplayer combat with destructible environments" },
             { name: "Blackwake", steam: "https://store.steampowered.com/app/420290/", desc: "Naval warfare sandbox with ship-to-ship battles" },
             { name: "Blade Symphony", steam: "https://store.steampowered.com/app/225600/", desc: "Competitive sword fighting with precise combat mechanics" },
+            { name: "Codename CURE II", steam: "https://store.steampowered.com/app/3725080/", desc: "Co-op zombie shooter with squad-based objective missions" },
+            { name: "Cyberpunk 2077", steam: null, desc: "Night City open-world RPG, hosted via CyberMP server" },
             { name: "Dark and Light", steam: "https://store.steampowered.com/app/529180/", desc: "Fantasy survival open world with magic and creatures" },
             { name: "Dragon Uprising Online", steam: "https://store.steampowered.com/app/1932300/", desc: "Action game focused on boss rushing in co-op" },
             { name: "Dune: Awakening", steam: "https://store.steampowered.com/app/1192040/", desc: "Desert planet survival MMO on Arrakis" },
             { name: "Echoes of Elysium", steam: "https://store.steampowered.com/app/2644050/", desc: "Co-op airship survival RPG" },
+            { name: "Everlast", steam: null, desc: "MMO-Lite action RPG where the undead have risen" },
             { name: "Hanako: Honor & Blade", steam: "https://store.steampowered.com/app/349510/", desc: "Feudal Japan melee combat with up to 24 players" },
+            { name: "Mass Effect 3 - Pocket Relay", steam: null, desc: "Private LAN/WAN server emulator for Mass Effect 3" },
             { name: "Midnight Ghost Hunt", steam: "https://store.steampowered.com/app/915810/", desc: "Prop hunt with supernatural ghost mechanics" },
             { name: "Nienix", steam: "https://store.steampowered.com/app/1332760/", desc: "Physics-based space action RPG with bullet hell combat" },
             { name: "Nightingale", steam: "https://store.steampowered.com/app/1928980/", desc: "Victorian fantasy survival across mystical realms" },
@@ -621,6 +856,7 @@
             { name: "ShatterRush", steam: "https://store.steampowered.com/app/3668330/", desc: "Multiplayer parkour FPS with destructible levels" },
             { name: "Spellbreak", steam: "https://steamcommunity.com/app/1399780", desc: "Battle royale magic combat with spell casting" },
             { name: "SPT (Escape from Tarkov Mod)", steam: null, desc: "Offline Tarkov experience with single-player focus" },
+            { name: "Stormforge", steam: null, desc: "Survival game with a Wine-hosted dedicated server" },
             { name: "Subsistence", steam: "https://store.steampowered.com/app/418030/", desc: "Open-world survival sandbox with base building" },
             { name: "Survive The Nights", steam: "https://store.steampowered.com/app/1502300/", desc: "Zombie survival crafting with day-night cycles" },
             { name: "Thunder Tier One", steam: "https://store.steampowered.com/app/1797170/", desc: "Realistic top-down special operations shooter" }
@@ -639,39 +875,67 @@
         const countDisplay = document.getElementById('count-display');
         const statGames = document.getElementById('stat-games');
         const visibleCount = document.getElementById('visible-count');
+        const searchClear = document.getElementById('search-clear');
+        const sortSelect = document.getElementById('sort-select');
+        const scrollTopBtn = document.getElementById('scroll-top');
+        const toastContainer = document.getElementById('toast-container');
 
         let searchTerm = '';
+        let sortOrder = 'a-z';
 
         const steamIcon = `<svg viewBox="0 0 24 24" fill="currentColor"><path d="M11.979 0C5.678 0 .511 4.86.022 11.037l6.432 2.658c.545-.371 1.203-.59 1.912-.59.063 0 .125.002.188.006l2.861-4.142V8.91c0-2.495 2.028-4.524 4.524-4.524 2.494 0 4.524 2.031 4.524 4.527s-2.03 4.525-4.524 4.525h-.105l-4.076 2.911c0 .052.004.105.004.159 0 1.875-1.515 3.396-3.39 3.396-1.635 0-3.016-1.173-3.331-2.727L.436 15.27C1.862 20.307 6.486 24 11.979 24c6.627 0 12-5.373 12-12S18.606 0 11.979 0zM7.54 18.21l-1.473-.61c.262.543.714.999 1.314 1.25 1.297.539 2.793-.076 3.332-1.375.263-.63.264-1.319.005-1.949s-.75-1.121-1.377-1.383c-.624-.26-1.29-.249-1.878-.03l1.523.63c.953.398 1.409 1.478 1.013 2.432-.397.957-1.479 1.41-2.433 1.012l-.026-.009v.032zm8.4-9.303c-1.34 0-2.43 1.09-2.43 2.43 0 1.34 1.09 2.43 2.43 2.43 1.34 0 2.43-1.09 2.43-2.43 0-1.34-1.09-2.43-2.43-2.43zm0 3.86c-.79 0-1.43-.64-1.43-1.43 0-.79.64-1.43 1.43-1.43.79 0 1.43.64 1.43 1.43 0 .79-.64 1.43-1.43 1.43z"/></svg>`;
 
-        function createCard(server, index) {
-            const card = document.createElement('div');
-            card.className = 'server-card';
-            card.dataset.name = server.name.toLowerCase();
-            card.style.transitionDelay = `${index * 0.03}s`;
-
-            const steamLink = server.steam 
-                ? `<a href="${server.steam}" target="_blank" rel="noopener" class="card-steam">${steamIcon} Steam</a>`
-                : '';
-
-            card.innerHTML = `
-                <div class="card-top">
-                    <h3 class="card-name">${server.name}</h3>
-                    ${steamLink}
-                </div>
-                <p class="card-desc">${server.desc}</p>
+        // Toast notification system
+        function showToast(message, type = 'success') {
+            const toast = document.createElement('div');
+            toast.className = `toast ${type}`;
+            toast.innerHTML = `
+                <svg class="toast-icon" viewBox="0 0 24 24" fill="currentColor">
+                    <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+                </svg>
+                <span class="toast-message">${message}</span>
             `;
+            toastContainer.appendChild(toast);
 
-            return card;
+            setTimeout(() => {
+                toast.style.animation = 'slideOut 0.3s ease forwards';
+                setTimeout(() => toast.remove(), 300);
+            }, 2000);
         }
 
+        // Scroll to top functionality
+        function updateScrollTopButton() {
+            if (window.scrollY > 300) {
+                scrollTopBtn.classList.add('visible');
+            } else {
+                scrollTopBtn.classList.remove('visible');
+            }
+        }
+
+        window.addEventListener('scroll', updateScrollTopButton, { passive: true });
+
+        scrollTopBtn.addEventListener('click', () => {
+            window.scrollTo({
+                top: 0,
+                behavior: 'smooth'
+            });
+        });
+
+        // Enhanced render function with sorting
         function renderServers() {
             grid.innerHTML = '';
             
-            const filtered = servers.filter(s => 
+            let filtered = servers.filter(s => 
                 s.name.toLowerCase().includes(searchTerm) || 
                 s.desc.toLowerCase().includes(searchTerm)
             );
+
+            // Sort by name
+            if (sortOrder === 'a-z') {
+                filtered.sort((a, b) => a.name.localeCompare(b.name));
+            } else if (sortOrder === 'z-a') {
+                filtered.sort((a, b) => b.name.localeCompare(a.name));
+            }
 
             visibleCount.textContent = `${filtered.length} of ${servers.length}`;
 
@@ -697,6 +961,27 @@
                     });
                 });
             });
+        }
+
+        function createCard(server, index) {
+            const card = document.createElement('div');
+            card.className = 'server-card';
+            card.dataset.name = server.name.toLowerCase();
+            card.style.transitionDelay = `${index * 0.03}s`;
+
+            const steamLink = server.steam 
+                ? `<a href="${server.steam}" target="_blank" rel="noopener" class="card-steam">${steamIcon} Steam</a>`
+                : '';
+
+            card.innerHTML = `
+                <div class="card-top">
+                    <h3 class="card-name">${server.name}</h3>
+                    ${steamLink}
+                </div>
+                <p class="card-desc">${server.desc}</p>
+            `;
+
+            return card;
         }
 
         function renderFuture() {
@@ -733,19 +1018,63 @@
             update();
         }
 
+        // Search input handler with debounce
         let debounceTimer;
         searchInput.addEventListener('input', (e) => {
             clearTimeout(debounceTimer);
             debounceTimer = setTimeout(() => {
                 searchTerm = e.target.value.toLowerCase().trim();
+                updateSearchClearButton();
                 renderServers();
             }, 100);
         });
 
+        // Search clear button
+        function updateSearchClearButton() {
+            if (searchInput.value) {
+                searchClear.classList.add('visible');
+            } else {
+                searchClear.classList.remove('visible');
+            }
+        }
+
+        searchClear.addEventListener('click', () => {
+            searchInput.value = '';
+            searchTerm = '';
+            updateSearchClearButton();
+            renderServers();
+            searchInput.focus();
+        });
+
+        // Sort change handler
+        sortSelect.addEventListener('change', (e) => {
+            sortOrder = e.target.value;
+            renderServers();
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', (e) => {
+            // Focus search with /
+            if (e.key === '/' && document.activeElement !== searchInput) {
+                e.preventDefault();
+                searchInput.focus();
+            }
+            // Clear search with Esc
+            if (e.key === 'Escape' && document.activeElement === searchInput) {
+                searchInput.value = '';
+                searchTerm = '';
+                updateSearchClearButton();
+                renderServers();
+                searchInput.blur();
+            }
+        });
+
+        // Initialize
         renderServers();
         renderFuture();
         animateCounter(servers.length, countDisplay);
         animateCounter(servers.length, statGames);
+        updateScrollTopButton();
     </script>
 </body>
 </html>
